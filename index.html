@@ -1487,9 +1487,9 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version a210b7d86, updated Thu Sep 16 13:45:19 2021 -0700" name="generator">
+  <meta content="Bikeshed version dfbc2b297, updated Thu Nov 11 15:52:32 2021 -0800" name="generator">
   <link href="https://AOMediaCodec.github.io/av1-hdr10plus" rel="canonical">
-  <meta content="fbefb1f92eb8909c67cf3278192f597589dd89d8" name="document-revision">
+  <meta content="d30ea475fd10cacb175412b4fb4e61b518714414" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1690,6 +1690,16 @@ figcaption {
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }</style>
+<style>/* style-issues */
+
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1875,7 +1885,7 @@ dfn > a.self-link::before      { content: "#"; }
 </style>
  <body class="h-entry">
   <div class="head">
-   <p data-fill-with="logo"></p>
+   <p data-fill-with="logo"><a class="logo" href="https://www.aomedia.org/"> <img alt="AOM" height="174" src="https://aomedia.org/assets/images/aomedia-icon-only.png" width="174"> </a> </p>
    <h1 class="p-name no-ref" id="title">HDR10+ AV1 Metadata Handling Specification</h1>
    <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Commit Snapshot, <time class="dt-updated" datetime="2021-08-30">30 August 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
@@ -1985,6 +1995,7 @@ THE OTHER MEMBER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </p>
    <h2 class="heading settled" data-level="5" id="isobmff-cmaf"><span class="secno">5. </span><span class="content">ISOBMFF/CMAF</span><a class="self-link" href="#isobmff-cmaf"></a></h2>
    <p>The <a href="https://aomediacodec.github.io/av1-isobmff/#cmaf">CMAF AV1 track format</a> addresses structural constraints on ISOBMFF files defined by CMAF.</p>
    <p>A CMAF AV1 track that conforms to this specification (i.e. contains HDR10+ metadata OBUs) should use the compatible brand code "cdm4" identified in <a data-link-type="biblio" href="#biblio-cta-5001">[CTA-5001]</a> in the `ftyp` box, in addition to the CMAF file brand `av01`.</p>
+   <p>AV1 Metadata sample group entry `av1M` shall not be used.</p>
    <h2 class="heading settled" data-level="6" id="hdr10-compatible-manifests"><span class="secno">6. </span><span class="content">HDR10+ Compatible Manifests</span><a class="self-link" href="#hdr10-compatible-manifests"></a></h2>
    <p>The value of the <b>codecs</b> parameter for AV1 streams defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> <b> shall </b> remain unchanged when HDR10+ is included.</p>
    <p><a data-link-type="biblio" href="#biblio-dash">[DASH]</a> Content following <a data-link-type="biblio" href="#biblio-dash-iop">[DASH-IOP]</a> <b>should</b> include a Supplemental Descriptor with a @schemeUri set to "http://dashif.org/metadata/hdr" and a @value set to "SMPTE2094-40" in Manifest files to aid players to identify tracks containing HDR10+.</p>

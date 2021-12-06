@@ -1489,7 +1489,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 31a2f03f4, updated Wed Dec 1 15:27:21 2021 -0800" name="generator">
   <link href="https://AOMediaCodec.github.io/av1-hdr10plus" rel="canonical">
-  <meta content="3359ce569d7fee245cc7c879b482c1e17df5c60f" name="document-revision">
+  <meta content="dddcd293076c7827087d9526aa6eaee92fad576e" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1690,6 +1690,47 @@ figcaption {
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }</style>
+<style>/* style-dfn-panel */
+
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    height: auto;
+    width: -webkit-fit-content;
+    width: fit-content;
+    max-width: 300px;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0; }
+.dfn-panel li { list-style: inside; }
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: .5em;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+}
+
+.dfn-paneled { cursor: pointer; }
+</style>
 <style>/* style-issues */
 
 a[href].issue-return {
@@ -1882,20 +1923,28 @@ dfn > a.self-link::before      { content: "#"; }
         --selflink-hover-text: white;
     }
 }
-</style>
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
+}</style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.aomedia.org/"> <img alt="AOM" height="174" src="https://aomedia.org/assets/images/aomedia-icon-only.png" width="174"> </a> </p>
    <h1 class="p-name no-ref" id="title">HDR10+ AV1 Metadata Handling Specification</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">AOM Working Group Draft, <time class="dt-updated" datetime="2021-08-30">30 August 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">AOM Working Group Draft, <time class="dt-updated" datetime="2021-12-03">3 December 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
      <dd><a class="u-url" href="https://AOMediaCodec.github.io/av1-hdr10plus">https://AOMediaCodec.github.io/av1-hdr10plus</a>
      <dt>Issue Tracking:
      <dd><a href="https://github.com/AOMediaCodec/av1-hdr10plus/issues/">GitHub</a>
-     <dt class="editor">Editor:
+     <dt class="editor">Editors:
      <dd class="editor p-author h-card vcard"><span class="p-name fn">Paul Hearty</span> (<span class="p-org org">Samsung</span>)
+     <dd class="editor p-author h-card vcard"><span class="p-name fn">Bill Mandel</span> (<span class="p-org org">Samsung</span>)
+     <dd class="editor p-author h-card vcard"><span class="p-name fn">Cyril Concolato</span> (<span class="p-org org">Netflix</span>)
     </dl>
    </div>
    <div data-fill-with="warning">
@@ -1913,32 +1962,40 @@ dfn > a.self-link::before      { content: "#"; }
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
-   <p>This document specifies how to use HDR10+ metadata, <a data-link-type="biblio" href="#biblio-smpte-st-2094-40">[SMPTE-ST-2094-40]</a>, with <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> including when supporting <a data-link-type="biblio" href="#biblio-cmaf">[CMAF]</a>.</p>
+   <p>This document specifies how to use <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata">HDR10+ metadata</a> within <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> streams, including when carried in <a data-link-type="biblio" href="#biblio-cmaf">[CMAF]</a>.</p>
   </div>
   <div data-fill-with="at-risk"></div>
   <nav data-fill-with="table-of-contents" id="toc">
    <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
    <ol class="toc" role="directory">
+    <li><a href="#introduction"><span class="secno">1</span> <span class="content">Introduction</span></a>
     <li>
-     <a href="#introduction"><span class="secno">1</span> <span class="content">Introduction</span></a>
+     <a href="#UsingHDR10plus"><span class="secno">2</span> <span class="content">Use of HDR10+ in AV1 streams</span></a>
      <ol class="toc">
-      <li><a href="#scope"><span class="secno">1.1</span> <span class="content">Scope</span></a>
-      <li><a href="#acronyms"><span class="secno">1.2</span> <span class="content">Acronyms</span></a>
+      <li><a href="#hdr10plus-obus"><span class="secno">2.1</span> <span class="content">HDR10+ OBU</span></a>
+      <li>
+       <a href="#constraints"><span class="secno">2.2</span> <span class="content">Constraints</span></a>
+       <ol class="toc">
+        <li><a href="#color-configuration"><span class="secno">2.2.1</span> <span class="content">Color Configuration</span></a>
+        <li><a href="#placement"><span class="secno">2.2.2</span> <span class="content">Placement of OBUs</span></a>
+        <li><a href="#film-grain"><span class="secno">2.2.3</span> <span class="content">Provision for Film Grain Processing</span></a>
+       </ol>
      </ol>
     <li>
-     <a href="#use-of-hdr10-with-av1-t35-obus"><span class="secno">2</span> <span class="content">Use of HDR10+ with AV1 T.35 OBUs:</span></a>
+     <a href="#transport"><span class="secno">3</span> <span class="content">Storage and Transport considerations</span></a>
      <ol class="toc">
-      <li><a href="#color-configuration"><span class="secno">2.1</span> <span class="content">Color Configuration</span></a>
-      <li><a href="#hdr10-obu"><span class="secno">2.2</span> <span class="content">HDR10+ OBU</span></a>
-      <li><a href="#placement-of-hdr10-obus"><span class="secno">2.3</span> <span class="content">Placement of HDR10+ OBUs</span></a>
+      <li><a href="#codecconfigurationrecord"><span class="secno">3.1</span> <span class="content">Constraints on AV1CodecConfigurationRecord</span></a>
+      <li><a href="#isobmff-constraints"><span class="secno">3.2</span> <span class="content">ISOBMFF Constraints</span></a>
+      <li><a href="#httpstreaming-constraints"><span class="secno">3.3</span> <span class="content">HTTP Streaming Constraints</span></a>
      </ol>
-    <li><a href="#storage-and-transport-considerations"><span class="secno">3</span> <span class="content">Storage and Transport considerations:</span></a>
-    <li><a href="#constraints-on-encryption"><span class="secno">4</span> <span class="content">Constraints on Encryption</span></a>
-    <li><a href="#isobmff-cmaf"><span class="secno">5</span> <span class="content">ISOBMFF/CMAF</span></a>
-    <li><a href="#hdr10-compatible-manifests"><span class="secno">6</span> <span class="content">HDR10+ Compatible Manifests</span></a>
-    <li><a href="#film-grain-processing"><span class="secno">7</span> <span class="content">Film Grain Processing:</span></a>
-    <li><a href="#example-streams-and-tools"><span class="secno">8</span> <span class="content">Example Streams and Tools:</span></a>
+    <li><a href="#tools"><span class="secno">4</span> <span class="content">Example Streams and Tools</span></a>
     <li><a href="#conformance"><span class="secno"></span> <span class="content"> Conformance</span></a>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
     <li>
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ol class="toc">
@@ -1949,63 +2006,57 @@ dfn > a.self-link::before      { content: "#"; }
   </nav>
   <main>
    <h2 class="heading settled" data-level="1" id="introduction"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#introduction"></a></h2>
-   <h3 class="heading settled" data-level="1.1" id="scope"><span class="secno">1.1. </span><span class="content">Scope</span><a class="self-link" href="#scope"></a></h3>
-   <p>This document specifies how to use HDR10+ metadata, <a data-link-type="biblio" href="#biblio-smpte-st-2094-40">[SMPTE-ST-2094-40]</a>, with <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> including when supporting <a data-link-type="biblio" href="#biblio-cmaf">[CMAF]</a>.</p>
-   <p>Various tools, services and devices support creation and use of HDR10+ dynamic metadata, <a data-link-type="biblio" href="#biblio-smpte-st-2094-40">[SMPTE-ST-2094-40]</a>, which can be easily utilized directly in AV1 systems.  Carriage of HDR10+ in AV1 leverages the existing ITU-T T.35, <a data-link-type="biblio" href="#biblio-itu-t-t35">[ITU-T-T35]</a>, support which is defined in <a data-link-type="biblio" href="#biblio-cta-861">[CTA-861]</a>. HDR10+ data is placed in AV1 metadata OBUs of metadata type equal to METADATA_TYPE_ITUT_T35. This document covers details of the OBU placement.</p>
-   <h3 class="heading settled" data-level="1.2" id="acronyms"><span class="secno">1.2. </span><span class="content">Acronyms</span><a class="self-link" href="#acronyms"></a></h3>
-   <p>For the purpose of this specification, the following acronyms apply:</p>
-   <ul>
-    <li data-md>
-     <p><b>CMAF</b>:  MPEG Common Media Application Format <a data-link-type="biblio" href="#biblio-cmaf">[CMAF]</a></p>
-    <li data-md>
-     <p><b>MDCV</b>:  Mastering Display Color Volume SMPTE ST 2086 <a data-link-type="biblio" href="#biblio-smpte-st-2086">[SMPTE-ST-2086]</a></p>
-    <li data-md>
-     <p><b>MaxCLL</b>: HDR10 Static Metadata item Maximum Content Light Level <a data-link-type="biblio" href="#biblio-cta-861">[CTA-861]</a></p>
-    <li data-md>
-     <p><b>MaxFALL</b>: HDR10 Static Metadata item Maximum Frame Average Light Level <a data-link-type="biblio" href="#biblio-cta-861">[CTA-861]</a></p>
-    <li data-md>
-     <p><b>OBU</b>:  Open Bitstream Units <a data-link-type="biblio" href="#biblio-av1">[AV1]</a></p>
-    <li data-md>
-     <p><b>TU</b>:  Temporal Unit <a data-link-type="biblio" href="#biblio-av1">[AV1]</a></p>
-   </ul>
-   <h2 class="heading settled" data-level="2" id="use-of-hdr10-with-av1-t35-obus"><span class="secno">2. </span><span class="content">Use of HDR10+ with AV1 T.35 OBUs:</span><a class="self-link" href="#use-of-hdr10-with-av1-t35-obus"></a></h2>
-   <h3 class="heading settled" data-level="2.1" id="color-configuration"><span class="secno">2.1. </span><span class="content">Color Configuration</span><a class="self-link" href="#color-configuration"></a></h3>
-   <p>Streams suitable for incorporating HDR10+ metadata as described in this specification shall use the following values for the AV1 color config:</p>
-   <ul>
-    <li data-md>
-     <p>color_primaries = 9 (<a data-link-type="biblio" href="#biblio-bt-2020">[BT-2020]</a>)</p>
-    <li data-md>
-     <p>transfer_characteristics = 16 (<a data-link-type="biblio" href="#biblio-smpte-st-2084">[SMPTE-ST-2084]</a> / <a data-link-type="biblio" href="#biblio-bt-2100">[BT-2100]</a>)</p>
-    <li data-md>
-     <p>matrix_coefficients = 9 (<a data-link-type="biblio" href="#biblio-bt-2020">[BT-2020]</a>)</p>
-   </ul>
-   <p>VideoFullRangeFlag should be set to 0, subsampling_x and subsampling_y should be set to 0, mono_chrome should be 0. chroma_sample_position should be set to 2.</p>
-   <h3 class="heading settled" data-level="2.2" id="hdr10-obu"><span class="secno">2.2. </span><span class="content">HDR10+ OBU</span><a class="self-link" href="#hdr10-obu"></a></h3>
-   <p>In this specification, HDR10+ Metadata is defined as data with the semantics defined in <a data-link-type="biblio" href="#biblio-smpte-st-2094-40">[SMPTE-ST-2094-40]</a>, using the syntax defined in <a data-link-type="biblio" href="#biblio-cta-861">[CTA-861]</a>, as illustrated in Figure 1.</p>
+   <p>This document specifies how to use <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata①">HDR10+ metadata</a> within <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> streams, including when carried in <a data-link-type="biblio" href="#biblio-cmaf">[CMAF]</a>.</p>
+   <p>Various tools, services and devices support creation and use of <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata②">HDR10+ metadata</a> which can be easily utilized directly in <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> systems. Carriage of <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata③">HDR10+ metadata</a> in <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> leverages <a data-link-type="biblio" href="#biblio-itu-t-t35">[ITU-T-T35]</a> and <a data-link-type="biblio" href="#biblio-cta-861">[CTA-861]</a>. <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata④">HDR10+ metadata</a> is placed in <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1">metadata OBUs</a> of type <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①">ITU-T T.35 Metadata</a>. This document covers details of the placement of these <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②">OBUs</a> in AV1 streams.</p>
+   <h2 class="heading settled" data-level="2" id="UsingHDR10plus"><span class="secno">2. </span><span class="content">Use of HDR10+ in AV1 streams</span><a class="self-link" href="#UsingHDR10plus"></a></h2>
+   <h3 class="heading settled" data-level="2.1" id="hdr10plus-obus"><span class="secno">2.1. </span><span class="content">HDR10+ OBU</span><a class="self-link" href="#hdr10plus-obus"></a></h3>
+   <p>In this specification, <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="hdr10-metadata">HDR10+ Metadata</dfn> is defined as data with the semantics defined in <a data-link-type="biblio" href="#biblio-smpte-st-2094-40">[SMPTE-ST-2094-40]</a>, using the syntax defined in <a data-link-type="biblio" href="#biblio-cta-861">[CTA-861]</a>. <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="hdr10-metadata-obu">HDR10+ Metadata OBU</dfn> is defined as <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑤">HDR10+ Metadata</a> carried in an <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③">OBU</a> of type <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1④">ITU-T T.35 Metadata</a> as defined in <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> and illustrated in Figure 1.</p>
    <center><img height="635" src="T35.png" width="800"></center>
    <center><b>Figure 1. </b>METADATA_TYPE_ITUT_T35 OBU Structure</center>
-   <p class="note" role="note"><span>Note:</span> AV1 <a href="https://aomediacodec.github.io/av1-spec/#general-metadata-obu-syntax">defines</a> the general metadata OBU syntax for HDR10 Static Metadata and ITU-T T.35 Metadata.</p>
-   <h3 class="heading settled" data-level="2.3" id="placement-of-hdr10-obus"><span class="secno">2.3. </span><span class="content">Placement of HDR10+ OBUs</span><a class="self-link" href="#placement-of-hdr10-obus"></a></h3>
-   <p>As defined in <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> and shown in Figure 2 an AOM AV1 coded video sequence consists of one or more TUs. A TU contains a series of OBUs starting from a temporal delimiter, optional sequence headers, optional metadata OBUs, a sequence of one or more frame headers, each followed by zero or more tile group OBUs as well as optional padding OBUs.</p>
-   <p>Consequently, for each frame with show_frame=1 or show_existing_frame=1, there shall be one and only one HDR10+ metadata OBU preceding the frame header for this frame and located after the last OBU of the previous frame (if any) or after the Sequence Header (if any) or after the start of the temporal unit (e.g. after the temporal delimiter, for storage formats where temporal delimiters are preserved).</p>
-   <p>HDR10+ Dynamic Metadata OBUs are not provided when show_frame=0. For non-layered streams, there is only one HDR10+ Dynamic Metadata OBU per TU.  For AV1 streams encoded with multiple layers, HDR10+ Dynamic Metadata may apply to one or more layers but the details are out of scope of this version of the specification.</p>
+   <p class="note" role="note"><span>NOTE:</span> <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> defines the general Metadata OBU syntax for <a data-link-type="dfn" href="#hdr10-static-metadata" id="ref-for-hdr10-static-metadata">HDR10 Static Metadata</a> and <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1⑤">ITU-T T.35 Metadata</a>.</p>
+   <h3 class="heading settled" data-level="2.2" id="constraints"><span class="secno">2.2. </span><span class="content">Constraints</span><a class="self-link" href="#constraints"></a></h3>
+   <p>The following sections define constraints that apply to AV1 streams when carrying <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑥">HDR10+ Metadata</a>.</p>
+   <h4 class="heading settled" data-level="2.2.1" id="color-configuration"><span class="secno">2.2.1. </span><span class="content">Color Configuration</span><a class="self-link" href="#color-configuration"></a></h4>
+   <p>Streams suitable for incorporating <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑦">HDR10+ metadata</a> as described in this specification shall use the following values for the AV1 <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1⑥">color_config</a>:</p>
+   <ul>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1⑦">color_primaries</a> = 9 (<a data-link-type="biblio" href="#biblio-bt-2020">[BT-2020]</a>)</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1⑧">transfer_characteristics</a> = 16 (<a data-link-type="biblio" href="#biblio-smpte-st-2084">[SMPTE-ST-2084]</a> / <a data-link-type="biblio" href="#biblio-bt-2100">[BT-2100]</a>)</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1⑨">matrix_coefficients</a> = 9 (<a data-link-type="biblio" href="#biblio-bt-2020">[BT-2020]</a>)</p>
+   </ul>
+   <p>Additionally, the following recommendations apply:</p>
+   <ul>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①⓪">VideoFullRangeFlag</a> should be set to 0</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①①">subsampling_x</a> and <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①②">subsampling_y</a> should be set to 0</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①③">mono_chrome</a> should be 0</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①④">chroma_sample_position</a> should be set to 2</p>
+   </ul>
+   <h4 class="heading settled" data-level="2.2.2" id="placement"><span class="secno">2.2.2. </span><span class="content">Placement of OBUs</span><a class="self-link" href="#placement"></a></h4>
+   <p>As defined in <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> and shown in Figure 2, an <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①⑤">AV1 coded video sequence</a> consists of one or more <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①⑥">TUs</a>. A <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①⑦">TU</a> contains a series of <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①⑧">OBUs</a> starting from a <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1①⑨">Temporal Delimiter</a>, optional <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②⓪">sequence headers</a>, optional <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②①">metadata OBUs</a>, a sequence of one or more <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②②">frame headers</a>, each followed by zero or more <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②③">tile group OBUs</a> as well as optional padding <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②④">OBUs</a>.</p>
+   <p>Consequently, for each frame with <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②⑤">show_frame</a>=1 or <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②⑥">show_existing_frame</a>=1, there shall be one and only one <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu">HDR10+ metadata OBU</a> preceding the <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②⑦">Frame Header</a> for this frame and located after the last <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②⑧">OBU</a> of the previous frame (if any) or after the <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1②⑨">Sequence Header</a> (if any) or after the start of the <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③⓪">TU</a> (e.g. after the <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③①">Temporal Delimiter</a>, for storage formats where <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③②">Temporal Delimiters</a> are preserved).</p>
+   <p><a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu①">HDR10+ Metadata OBUs</a> are not provided when <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③③">show_frame</a>=0. For non-layered streams, there is only one <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu②">HDR10+ Metadata OBU</a> per <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③④">TU</a>. For AV1 streams encoded with multiple layers, <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑧">HDR10+ Metadata</a> may apply to one or more layers but the details are out of scope of this version of the specification.</p>
    <center><img height="222" src="obu_tu.png" width="444"></center>
    <center><b>Figure 2.</b> Example of OBU_Frame Structure</center>
-   <p>HDR10 Static Metadata (<a href="https://aomediacodec.github.io/av1-spec/#metadata-high-dynamic-range-mastering-display-color-volume-syntax">MDCV</a>, <a href="https://aomediacodec.github.io/av1-spec/#metadata-high-dynamic-range-content-light-level-syntax">MaxCLL</a> and <a href="https://aomediacodec.github.io/av1-spec/#metadata-high-dynamic-range-content-light-level-syntax">MaxFALL</a>)<b> may </b>be present.</p>
-   <h2 class="heading settled" data-level="3" id="storage-and-transport-considerations"><span class="secno">3. </span><span class="content">Storage and Transport considerations:</span><a class="self-link" href="#storage-and-transport-considerations"></a></h2>
-   <p>For formats that use the AV1CodecConfigurationRecord (e.g. ISOBMFF and MPEG-2 TS), HDR10+ Metadata OBUs shall not be present in the configOBUs field of the record.</p>
-   <h2 class="heading settled" data-level="4" id="constraints-on-encryption"><span class="secno">4. </span><span class="content">Constraints on Encryption</span><a class="self-link" href="#constraints-on-encryption"></a></h2>
-   <p><a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> indicates that Metadata OBUs may be protected. This specification requires that HDR10 and HDR10+ metadata OBUs be unprotected.</p>
-   <h2 class="heading settled" data-level="5" id="isobmff-cmaf"><span class="secno">5. </span><span class="content">ISOBMFF/CMAF</span><a class="self-link" href="#isobmff-cmaf"></a></h2>
-   <p>The <a href="https://aomediacodec.github.io/av1-isobmff/#cmaf">CMAF AV1 track format</a> addresses structural constraints on ISOBMFF files defined by CMAF.</p>
-   <p>A CMAF AV1 track that conforms to this specification (i.e. contains HDR10+ metadata OBUs) should use the compatible brand code "cdm4" identified in <a data-link-type="biblio" href="#biblio-cta-5001">[CTA-5001]</a> in the `ftyp` box, in addition to the CMAF file brand `av01`.</p>
-   <p>AV1 Metadata sample group entry `av1M` shall not be used.</p>
-   <h2 class="heading settled" data-level="6" id="hdr10-compatible-manifests"><span class="secno">6. </span><span class="content">HDR10+ Compatible Manifests</span><a class="self-link" href="#hdr10-compatible-manifests"></a></h2>
-   <p>The value of the <b>codecs</b> parameter for AV1 streams defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> <b> shall </b> remain unchanged when HDR10+ is included.</p>
-   <p><a data-link-type="biblio" href="#biblio-dash">[DASH]</a> Content following <a data-link-type="biblio" href="#biblio-dash-iop">[DASH-IOP]</a> <b>should</b> include a Supplemental Descriptor with a @schemeUri set to "http://dashif.org/metadata/hdr" and a @value set to "SMPTE2094-40" in Manifest files to aid players to identify tracks containing HDR10+.</p>
-   <h2 class="heading settled" data-level="7" id="film-grain-processing"><span class="secno">7. </span><span class="content">Film Grain Processing:</span><a class="self-link" href="#film-grain-processing"></a></h2>
-    It is possible that some AV1 coded bitstreams may contain both HDR10+ metadata and film grain synthesis information. It is recommended that decoders in such scenarios perform the film grain synthesis prior to any HDR10+ processing. 
-   <h2 class="heading settled" data-level="8" id="example-streams-and-tools"><span class="secno">8. </span><span class="content">Example Streams and Tools:</span><a class="self-link" href="#example-streams-and-tools"></a></h2>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="hdr10-static-metadata">HDR10 Static Metadata</dfn> (defined as <a data-link-type="dfn" href="#biblio-smpte-st-2086" id="ref-for-biblio-smpte-st-2086">MDCV</a>, <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861">MaxCLL</a> and <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861①">MaxFALL</a>) may be present.</p>
+   <h4 class="heading settled" data-level="2.2.3" id="film-grain"><span class="secno">2.2.3. </span><span class="content">Provision for Film Grain Processing</span><a class="self-link" href="#film-grain"></a></h4>
+   <p>It is possible that some <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> coded bitstreams may contain both <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑨">HDR10+ Metadata</a> and film grain synthesis information. It is recommended that decoders in such scenarios perform the film grain synthesis prior to any <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata①⓪">HDR10+ Metadata</a> processing.</p>
+   <h2 class="heading settled" data-level="3" id="transport"><span class="secno">3. </span><span class="content">Storage and Transport considerations</span><a class="self-link" href="#transport"></a></h2>
+   <h3 class="heading settled" data-level="3.1" id="codecconfigurationrecord"><span class="secno">3.1. </span><span class="content">Constraints on AV1CodecConfigurationRecord</span><a class="self-link" href="#codecconfigurationrecord"></a></h3>
+   <p>For formats that use the <a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff">AV1CodecConfigurationRecord</a> when storing AV1 streams (e.g. ISOBMFF and MPEG-2 TS), <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu③">HDR10+ Metadata OBUs</a> shall not be present in the <a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff①">configOBUs</a> field of the <a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff②">AV1CodecConfigurationRecord</a>.</p>
+   <h3 class="heading settled" data-level="3.2" id="isobmff-constraints"><span class="secno">3.2. </span><span class="content">ISOBMFF Constraints</span><a class="self-link" href="#isobmff-constraints"></a></h3>
+   <p><a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff③">AV1 Metadata sample group</a> defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> shall not be used.</p>
+   <p><a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> indicates that <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③⑤">Metadata OBUs</a> may be protected. This specification requires that <a data-link-type="dfn" href="#hdr10-static-metadata" id="ref-for-hdr10-static-metadata①">HDR10 Static Metadata</a> and <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu④">HDR10+ Metadata OBUs</a> be unprotected.</p>
+   <p>An ISOBMFF file or CMAF AV1 track as defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> that also conforms to this specification (i.e. that contains <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑤">HDR10+ metadata OBUs</a> and complies to the constraints from this specification) should use the brand <code><a data-link-type="dfn" href="#biblio-cta-5001" id="ref-for-biblio-cta-5001">cdm4</a></code> defined in <a data-link-type="biblio" href="#biblio-cta-5001">[CTA-5001]</a> in addition to the brand <code><a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff④">av01</a></code>. If the brand <code><a data-link-type="dfn" href="#biblio-cta-5001" id="ref-for-biblio-cta-5001①">cdm4</a></code> is used in conjonction with AV1 streams, the constraints defined in this specification shall be respected.</p>
+   <h3 class="heading settled" data-level="3.3" id="httpstreaming-constraints"><span class="secno">3.3. </span><span class="content">HTTP Streaming Constraints</span><a class="self-link" href="#httpstreaming-constraints"></a></h3>
+   <p>The value of the <a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff⑤">codecs</a> parameter for AV1 streams that is used when using HTTP streaming technologies shall remain unchanged when <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑥">HDR10+ Metadata OBUs</a> are included in the AV1 stream.</p>
+   <p>Additionally, <a data-link-type="biblio" href="#biblio-dash">[DASH]</a> content following <a data-link-type="biblio" href="#biblio-dash-iop">[DASH-IOP]</a> should include a <a data-link-type="dfn" href="#biblio-dash" id="ref-for-biblio-dash">Supplemental Descriptor</a> with a <a data-link-type="dfn" href="#biblio-dash" id="ref-for-biblio-dash①">@schemeUri</a> set to <code>"http://dashif.org/metadata/hdr"</code> and a <a data-link-type="dfn" href="#biblio-dash" id="ref-for-biblio-dash②">@value</a> set to <code>"SMPTE2094-40"</code> in manifest files to aid players to identify tracks containing <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑦">HDR10+ Metadata OBUs</a>.</p>
+   <h2 class="heading settled" data-level="4" id="tools"><span class="secno">4. </span><span class="content">Example Streams and Tools</span><a class="self-link" href="#tools"></a></h2>
     Information on this topic is found in the <a href="https://github.com/AOMediaCodec/av1-hdr10plus/wiki">Wiki</a> for this project. 
   </main>
   <div data-fill-with="conformance">
@@ -2154,6 +2205,72 @@ dfn > a.self-link::before      { content: "#"; }
 
 })();
 </script>
+  <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#hdr10-metadata">HDR10+ Metadata</a><span>, in § 2.1</span>
+   <li><a href="#hdr10-metadata-obu">HDR10+ Metadata OBU</a><span>, in § 2.1</span>
+   <li><a href="#hdr10-static-metadata">HDR10 Static Metadata</a><span>, in § 2.2.2</span>
+  </ul>
+  <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[AV1]</a> defines the following terms:
+    <ul>
+     <li><span>av1 coded video sequence</span>
+     <li><span>chroma_sample_position</span>
+     <li><span>color_config</span>
+     <li><span>color_primaries</span>
+     <li><span>frame header</span>
+     <li><span>itu-t t.35 metadata</span>
+     <li><span>matrix_coefficients</span>
+     <li><span>metadata obu</span>
+     <li><span>mono_chrome</span>
+     <li><span>obu</span>
+     <li><span>sequence header</span>
+     <li><span>show_existing_frame</span>
+     <li><span>show_frame</span>
+     <li><span>subsampling_x</span>
+     <li><span>subsampling_y</span>
+     <li><span>temporal delimiter</span>
+     <li><span>tile group obus</span>
+     <li><span>transfer_characteristics</span>
+     <li><span>tu</span>
+     <li><span>videofullrangeflag</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[AV1-ISOBMFF]</a> defines the following terms:
+    <ul>
+     <li><span>av01</span>
+     <li><span>av1 metadata sample group</span>
+     <li><span>av1codecconfigurationrecord</span>
+     <li><span>codecs</span>
+     <li><span>configobus</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CTA-5001]</a> defines the following terms:
+    <ul>
+     <li><span>cdm4</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[CTA-861]</a> defines the following terms:
+    <ul>
+     <li><span>maxcll</span>
+     <li><span>maxfall</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[DASH]</a> defines the following terms:
+    <ul>
+     <li><span>@schemeuri</span>
+     <li><span>@value</span>
+     <li><span>supplemental descriptor</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[SMPTE-ST-2086]</a> defines the following terms:
+    <ul>
+     <li><span>mdcv</span>
+    </ul>
+  </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
@@ -2189,3 +2306,86 @@ dfn > a.self-link::before      { content: "#"; }
    <dt id="biblio-smpte-st-2084">[SMPTE-ST-2084]
    <dd><a href="https://ieeexplore.ieee.org/document/7291452"><cite>SMPTE ST 2084:2014</cite></a>. Standard. URL: <a href="https://ieeexplore.ieee.org/document/7291452">https://ieeexplore.ieee.org/document/7291452</a>
   </dl>
+  <aside class="dfn-panel" data-for="hdr10-metadata">
+   <b><a href="#hdr10-metadata">#hdr10-metadata</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-hdr10-metadata①">1. Introduction</a> <a href="#ref-for-hdr10-metadata②">(2)</a> <a href="#ref-for-hdr10-metadata③">(3)</a> <a href="#ref-for-hdr10-metadata④">(4)</a>
+    <li><a href="#ref-for-hdr10-metadata⑤">2.1. HDR10+ OBU</a>
+    <li><a href="#ref-for-hdr10-metadata⑥">2.2. Constraints</a>
+    <li><a href="#ref-for-hdr10-metadata⑦">2.2.1. Color Configuration</a>
+    <li><a href="#ref-for-hdr10-metadata⑧">2.2.2. Placement of OBUs</a>
+    <li><a href="#ref-for-hdr10-metadata⑨">2.2.3. Provision for Film Grain Processing</a> <a href="#ref-for-hdr10-metadata①⓪">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="hdr10-metadata-obu">
+   <b><a href="#hdr10-metadata-obu">#hdr10-metadata-obu</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-hdr10-metadata-obu">2.2.2. Placement of OBUs</a> <a href="#ref-for-hdr10-metadata-obu①">(2)</a> <a href="#ref-for-hdr10-metadata-obu②">(3)</a>
+    <li><a href="#ref-for-hdr10-metadata-obu③">3.1. Constraints on AV1CodecConfigurationRecord</a>
+    <li><a href="#ref-for-hdr10-metadata-obu④">3.2. ISOBMFF Constraints</a> <a href="#ref-for-hdr10-metadata-obu⑤">(2)</a>
+    <li><a href="#ref-for-hdr10-metadata-obu⑥">3.3. HTTP Streaming Constraints</a> <a href="#ref-for-hdr10-metadata-obu⑦">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="hdr10-static-metadata">
+   <b><a href="#hdr10-static-metadata">#hdr10-static-metadata</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-hdr10-static-metadata">2.1. HDR10+ OBU</a>
+    <li><a href="#ref-for-hdr10-static-metadata①">3.2. ISOBMFF Constraints</a>
+   </ul>
+  </aside>
+<script>/* script-dfn-panel */
+
+document.body.addEventListener("click", function(e) {
+    var queryAll = function(sel) { return [].slice.call(document.querySelectorAll(sel)); }
+    // Find the dfn element or panel, if any, that was clicked on.
+    var el = e.target;
+    var target;
+    var hitALink = false;
+    while(el.parentElement) {
+        if(el.tagName == "A") {
+            // Clicking on a link in a <dfn> shouldn't summon the panel
+            hitALink = true;
+        }
+        if(el.classList.contains("dfn-paneled")) {
+            target = "dfn";
+            break;
+        }
+        if(el.classList.contains("dfn-panel")) {
+            target = "dfn-panel";
+            break;
+        }
+        el = el.parentElement;
+    }
+    if(target != "dfn-panel") {
+        // Turn off any currently "on" or "activated" panels.
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(function(el){
+            el.classList.remove("on");
+            el.classList.remove("activated");
+        });
+    }
+    if(target == "dfn" && !hitALink) {
+        // open the panel
+        var dfnPanel = document.querySelector(".dfn-panel[data-for='" + el.id + "']");
+        if(dfnPanel) {
+            dfnPanel.classList.add("on");
+            var rect = el.getBoundingClientRect();
+            dfnPanel.style.left = window.scrollX + rect.right + 5 + "px";
+            dfnPanel.style.top = window.scrollY + rect.top + "px";
+            var panelRect = dfnPanel.getBoundingClientRect();
+            var panelWidth = panelRect.right - panelRect.left;
+            if(panelRect.right > document.body.scrollWidth && (rect.left - (panelWidth + 5)) > 0) {
+                // Reposition, because the panel is overflowing
+                dfnPanel.style.left = window.scrollX + rect.left - (panelWidth + 5) + "px";
+            }
+        } else {
+            console.log("Couldn't find .dfn-panel[data-for='" + el.id + "']");
+        }
+    } else if(target == "dfn-panel") {
+        // Switch it to "activated" state, which pins it.
+        el.classList.add("activated");
+        el.style.left = null;
+        el.style.top = null;
+    }
+
+});
+</script>

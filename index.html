@@ -1269,9 +1269,9 @@ Possible extra rowspan handling
 	ul.index ul,
 	ul.index dl { font-size: smaller; }
 	@media not print {
-		ul.index li span:not(.dfn-paneled) {
+		ul.index li a + span {
 			white-space: nowrap;
-		}
+			color: transparent; }
 		ul.index li a:hover + span,
 		ul.index li a:focus + span {
 			color: #707070;
@@ -1487,9 +1487,9 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version 31a2f03f4, updated Wed Dec 1 15:27:21 2021 -0800" name="generator">
+  <meta content="Bikeshed version cace53f8c, updated Tue Dec 7 12:12:54 2021 -0800" name="generator">
   <link href="https://AOMediaCodec.github.io/av1-hdr10plus" rel="canonical">
-  <meta content="dddcd293076c7827087d9526aa6eaee92fad576e" name="document-revision">
+  <meta content="f35e479be980f8d63fa24de096347376448291ce" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1950,7 +1950,9 @@ dfn > a.self-link::before      { content: "#"; }
    <div data-fill-with="warning">
     <details class="annoying-warning" open>
      <summary>Warning</summary>
-     <p>This specification is a draft of a potential new version of this specification and should not be referenced other than as a working draft.</p>
+     <p>This specification is still at draft stage and should not be referenced other than as a working draft.
+
+This specification is a draft of a potential new version of this specification and should not be referenced other than as a working draft.</p>
     </details>
    </div>
    <p class="copyright" data-fill-with="copyright">
@@ -2052,7 +2054,7 @@ dfn > a.self-link::before      { content: "#"; }
    <h3 class="heading settled" data-level="3.2" id="isobmff-constraints"><span class="secno">3.2. </span><span class="content">ISOBMFF Constraints</span><a class="self-link" href="#isobmff-constraints"></a></h3>
    <p><a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff③">AV1 Metadata sample group</a> defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> shall not be used.</p>
    <p><a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> indicates that <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③⑤">Metadata OBUs</a> may be protected. This specification requires that <a data-link-type="dfn" href="#hdr10-static-metadata" id="ref-for-hdr10-static-metadata①">HDR10 Static Metadata</a> and <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu④">HDR10+ Metadata OBUs</a> be unprotected.</p>
-   <p>An ISOBMFF file or CMAF AV1 track as defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> that also conforms to this specification (i.e. that contains <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑤">HDR10+ metadata OBUs</a> and complies to the constraints from this specification) should use the brand <code><a data-link-type="dfn" href="#biblio-cta-5001" id="ref-for-biblio-cta-5001">cdm4</a></code> defined in <a data-link-type="biblio" href="#biblio-cta-5001">[CTA-5001]</a> in addition to the brand <code><a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff④">av01</a></code>. If the brand <code><a data-link-type="dfn" href="#biblio-cta-5001" id="ref-for-biblio-cta-5001①">cdm4</a></code> is used in conjonction with AV1 streams, the constraints defined in this specification shall be respected.</p>
+   <p>An ISOBMFF file or CMAF AV1 track as defined in <a data-link-type="biblio" href="#biblio-av1-isobmff">[AV1-ISOBMFF]</a> that also conforms to this specification (i.e. that contains <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑤">HDR10+ metadata OBUs</a> and complies to the constraints from this specification) should use the brand <code><a data-link-type="dfn" href="#biblio-cta-5001" id="ref-for-biblio-cta-5001">cdm4</a></code> defined in <a data-link-type="biblio" href="#biblio-cta-5001">[CTA-5001]</a> in addition to the brand <code><a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff④">av01</a></code>. If the brand <code><a data-link-type="dfn" href="#biblio-cta-5001" id="ref-for-biblio-cta-5001①">cdm4</a></code> is used in conjunction with AV1 streams, the constraints defined in this specification shall be respected.</p>
    <h3 class="heading settled" data-level="3.3" id="httpstreaming-constraints"><span class="secno">3.3. </span><span class="content">HTTP Streaming Constraints</span><a class="self-link" href="#httpstreaming-constraints"></a></h3>
    <p>The value of the <a data-link-type="dfn" href="#biblio-av1-isobmff" id="ref-for-biblio-av1-isobmff⑤">codecs</a> parameter for AV1 streams that is used when using HTTP streaming technologies shall remain unchanged when <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑥">HDR10+ Metadata OBUs</a> are included in the AV1 stream.</p>
    <p>Additionally, <a data-link-type="biblio" href="#biblio-dash">[DASH]</a> content following <a data-link-type="biblio" href="#biblio-dash-iop">[DASH-IOP]</a> should include a <a data-link-type="dfn" href="#biblio-dash" id="ref-for-biblio-dash">Supplemental Descriptor</a> with a <a data-link-type="dfn" href="#biblio-dash" id="ref-for-biblio-dash①">@schemeUri</a> set to <code>"http://dashif.org/metadata/hdr"</code> and a <a data-link-type="dfn" href="#biblio-dash" id="ref-for-biblio-dash②">@value</a> set to <code>"SMPTE2094-40"</code> in manifest files to aid players to identify tracks containing <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu⑦">HDR10+ Metadata OBUs</a>.</p>

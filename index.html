@@ -1489,7 +1489,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 44af0bf3e, updated Fri Jul 29 17:05:16 2022 -0700" name="generator">
   <link href="https://AOMediaCodec.github.io/av1-hdr10plus" rel="canonical">
-  <meta content="4373983717477b31c1a809f8bf7b256fd14b020e" name="document-revision">
+  <meta content="60162f62192127fdc36f9913515123b89511023b" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -2045,7 +2045,7 @@ This specification is a draft of a potential new version of this specification a
    <p><a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu①">HDR10+ Metadata OBUs</a> are not provided when <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③③">show_frame</a>=0. For non-layered streams, there is only one <a data-link-type="dfn" href="#hdr10-metadata-obu" id="ref-for-hdr10-metadata-obu②">HDR10+ Metadata OBU</a> per <a data-link-type="dfn" href="#biblio-av1" id="ref-for-biblio-av1③④">TU</a>. For AV1 streams encoded with multiple layers, <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑧">HDR10+ Metadata</a> may apply to one or more layers but the details are out of scope of this version of the specification.</p>
    <center><img height="641" src="obu_tu.png" width="1413"></center>
    <center><b>Figure 2.</b> Example of placement of HDR10+ Metadata OBUs in an AV1 bitstream</center>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="hdr10-static-metadata">HDR10 Static Metadata</dfn> (defined as <a data-link-type="dfn" href="#biblio-smpte-st-2086" id="ref-for-biblio-smpte-st-2086">MDCV</a>, <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861">MaxCLL</a> and <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861①">MaxFALL</a>) may be present.</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="hdr10-static-metadata">HDR10 Static Metadata</dfn> is defined as <a data-link-type="dfn" href="#biblio-smpte-st-2086" id="ref-for-biblio-smpte-st-2086">MDCV</a>, <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861">MaxCLL</a> and <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861①">MaxFALL</a>. <a data-link-type="dfn" href="#biblio-smpte-st-2086" id="ref-for-biblio-smpte-st-2086①">MDCV</a> shall be present while <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861②">MaxCLL</a> and/or <a data-link-type="dfn" href="#biblio-cta-861" id="ref-for-biblio-cta-861③">MaxFALL</a> may be present.</p>
    <h4 class="heading settled" data-level="2.2.3" id="film-grain"><span class="secno">2.2.3. </span><span class="content">Provision for Film Grain Processing</span><a class="self-link" href="#film-grain"></a></h4>
    <p>It is possible that some <a data-link-type="biblio" href="#biblio-av1">[AV1]</a> coded bitstreams may contain both <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata⑨">HDR10+ Metadata</a> and film grain synthesis information. It is recommended that decoders in such scenarios perform the film grain synthesis prior to any <a data-link-type="dfn" href="#hdr10-metadata" id="ref-for-hdr10-metadata①⓪">HDR10+ Metadata</a> processing.</p>
    <h2 class="heading settled" data-level="3" id="transport"><span class="secno">3. </span><span class="content">Storage and Transport considerations</span><a class="self-link" href="#transport"></a></h2>
